@@ -15,7 +15,6 @@ class MultiStrategyDispatch(object):
     """
     MultiStrategyDispatch uses a
     combination of FunctionDispatch and singledispatch.
-
     singledispatch is attempted first. If nothing is
     registered for singledispatch, or an exception occurs,
     the FunctionDispatch instance is then used.

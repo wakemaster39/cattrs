@@ -274,7 +274,7 @@ def test_structuring_primitive_union_hook(converter, ints):
     # type: (Converter, List[int]) -> None
     """Registering a union loading hook works."""
 
-    def structure_hook(val, cl):
+    def structure_hook(val, cl, mapping):
         """Even ints are passed through, odd are stringified."""
         return val if val % 2 == 0 else str(val)
 
@@ -295,7 +295,7 @@ def test_structure_hook_func(converter):
     def can_handle(cls):
         return cls.__name__.startswith("F")
 
-    def handle(obj, cls):
+    def handle(obj, cls, mapping):
         return "hi"
 
     class Foo(object):
@@ -342,9 +342,13 @@ def test_subclass_registration_is_honored(converter):
     class Bar(Foo):
         pass
 
-    converter.register_structure_hook(Foo, lambda obj, cls: cls("foo"))
+    converter.register_structure_hook(
+        Foo, lambda obj, cls, mapping: cls("foo")
+    )
     assert converter.structure(None, Foo).value == "foo"
     assert converter.structure(None, Bar).value == "foo"
-    converter.register_structure_hook(Bar, lambda obj, cls: cls("bar"))
+    converter.register_structure_hook(
+        Bar, lambda obj, cls, mapping: cls("bar")
+    )
     assert converter.structure(None, Foo).value == "foo"
     assert converter.structure(None, Bar).value == "bar"
